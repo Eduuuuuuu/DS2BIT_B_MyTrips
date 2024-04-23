@@ -1,12 +1,9 @@
 package br.senai.sp.jandira.mytrips
 
 import android.os.Bundle
-import android.renderscript.Sampler.Value
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,14 +12,26 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BeachAccess
+import androidx.compose.material.icons.filled.Landscape
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Snowboarding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -32,12 +41,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import br.senai.sp.jandira.mytrips.screens.HomeTela
+import br.senai.sp.jandira.mytrips.screens.LoginTela
+import br.senai.sp.jandira.mytrips.screens.SingUpTela
 import br.senai.sp.jandira.mytrips.ui.theme.MyTripsTheme
 
 class MainActivity : ComponentActivity() {
@@ -50,8 +65,15 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting()
-                    SignUp()
+                    val controleDeNavegacao = rememberNavController()
+                    NavHost(
+                        navController = controleDeNavegacao,
+                        startDestination = "home"
+                    ){
+                        composable(route = "signUp"){ SingUpTela(controleDeNavegacao)}
+                        composable(route = "login"){ LoginTela(controleDeNavegacao) }
+                        composable(route = "home"){ HomeTela(controleDeNavegacao) }
+                    }
                 }
             }
         }
@@ -469,4 +491,240 @@ fun SignUpPreview() {
     }
 }
 
+@Composable
+fun Home() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(215.dp),
+            shape = RoundedCornerShape(0.dp)
+        ) {
+            Surface(modifier = Modifier.fillMaxSize()) {
+                Image(
+                    painter = painterResource(id = R.drawable.fundo_paris),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = ""
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Card (
+                        modifier = Modifier
+                            .width(61.dp)
+                            .height(61.dp)
+                            .offset(x = 80.dp, y = 15.dp),
+                        shape = CircleShape
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.mulher),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .fillMaxSize()
+                        )
+                    }
+                    Text(
+                        text = "Susanna Hoffs",
+                        fontSize = 14.sp,
+                        color = Color.White,
+                        modifier = Modifier
+                            .offset(x = -10.dp, y = 80.dp)
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(215.dp),
+                    verticalArrangement = Arrangement.Bottom
+                    ) {
+                    Text(
+                        text = "You're in Paris",
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        modifier = Modifier
+                            .offset(x = 35.dp, y = 16.dp)
+                    )
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = "",
+                        tint = Color.White,
+                        modifier = Modifier
+                            .height(18.dp)
+                            .width(18.dp)
+                            .offset(x = 18.dp, y = -4.dp)
+                    )
+                    Text(
+                        text = "My Trips",
+                        color = Color.White,
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .offset(x = 20.dp, y = -10.dp)
+                    )
+                }
+            }
+        }
+        Text(
+            text = "Categories",
+            color = Color(0xFF565454),
+            fontSize = 18.sp,
+            modifier = Modifier
+                .offset(x = 19.dp, y = 10.dp)
+        )
+        LazyRow (
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 18.dp)
+                .padding(vertical = 20.dp)
+        ){
+            item{
+                Card(
+                    elevation = CardDefaults.cardElevation(8.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFCF06F0)),
+                    modifier = Modifier
+                        .height(90.dp)
+                        .width(145.dp)
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxSize()
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Landscape,
+                            contentDescription = "",
+                            tint = Color.White,
+                            modifier = Modifier
+                                .height(42.dp)
+                                .width(42.dp)
+                        )
+                        Text(
+                            text = "Montain",
+                            color = Color.White,
+                            fontSize = 18.sp,
+                            modifier = Modifier
+                                .offset(x = 0.dp, y = -5.dp)
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Card(
+                    elevation = CardDefaults.cardElevation(8.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFEAABF4)),
+                    modifier = Modifier
+                        .height(90.dp)
+                        .width(145.dp)
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .padding(9.dp)
+                            .fillMaxSize()
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Snowboarding,
+                            contentDescription = "",
+                            tint = Color.White,
+                            modifier = Modifier
+                                .width(42.dp)
+                                .height(42.dp)
+                        )
+                        Text(
+                            text = "Snow",
+                            color = Color.White,
+                            fontSize = 18.sp,
+                            modifier = Modifier
+                                .offset(x = 0.dp, y = -3.dp)
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Card(
+                    elevation = CardDefaults.cardElevation(8.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFEAABF4)),
+                    modifier = Modifier
+                        .height(90.dp)
+                        .width(145.dp)
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .padding(9.dp)
+                            .fillMaxSize()
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.BeachAccess,
+                            contentDescription = "",
+                            tint = Color.White,
+                            modifier = Modifier
+                                .width(42.dp)
+                                .height(42.dp)
+                        )
+                        Text(
+                            text = "Beach",
+                            color = Color.White,
+                            fontSize = 18.sp,
+                            modifier = Modifier
+                                .offset(x = 0.dp, y = -3.dp)
+                        )
+                    }
+                }
+            }
+        }
+        OutlinedTextField(
+            value = "",
+            trailingIcon = {
+                 IconButton(onClick = { /*TODO*/ }) {
+                     Icon(
+                         imageVector = Icons.Default.Search,
+                         contentDescription = "",
+                         tint = Color(0xFFB7B7B7)
+                     )
+                 }
+            },
+            onValueChange = {},
+            modifier = Modifier
+                .height(58.dp)
+                .width(357.dp)
+                .offset(x = 16.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedBorderColor = Color.White,
+                unfocusedContainerColor = Color.White
+            ),
+            placeholder = {
+                Text(
+                    text = "Search your destiny",
+                    color = Color(0xFFA09C9C)
+                )
+            }
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        Text(
+            text = "Past Trips",
+            color = Color(0xFF565454),
+            fontSize = 18.sp,
+            modifier = Modifier
+                .offset(x = 17.dp)
+        )
+        Spacer(modifier = Modifier.height(9.dp))
+        LazyColumn{
+        }
+    }
+}
 
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun HomePreview() {
+    MyTripsTheme {
+        Home()
+    }
+}
