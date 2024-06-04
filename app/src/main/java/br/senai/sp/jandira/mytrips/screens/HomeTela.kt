@@ -11,17 +11,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BeachAccess
 import androidx.compose.material.icons.filled.Landscape
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Snowboarding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,10 +41,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import br.senai.sp.jandira.mytrips.R
+import br.senai.sp.jandira.mytrips.reduzirData
+import br.senai.sp.jandira.mytrips.repository.ViagemRepository
 import br.senai.sp.jandira.mytrips.ui.theme.MyTripsTheme
 
 @Composable
 fun HomeTela(controleDeNavegacao: NavHostController) {
+
+    val viagens = ViagemRepository().listarTodasAsViagens()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -222,6 +232,103 @@ fun HomeTela(controleDeNavegacao: NavHostController) {
                             modifier = Modifier
                                 .offset(x = 0.dp, y = -3.dp)
                         )
+                    }
+                }
+            }
+        }
+        OutlinedTextField(
+            value = "",
+            onValueChange = {},
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 13.dp)
+                .padding(vertical = 10.dp),
+            shape = RoundedCornerShape(30.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                unfocusedBorderColor = Color.White,
+                focusedBorderColor = Color.White
+            ),
+            placeholder = {
+                Text(
+                    text = "Search for your destiny",
+                    color = Color.LightGray
+                )
+            },
+            trailingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "",
+                    tint = Color.LightGray
+                )
+            }
+        )
+        Text(
+            text = "Past Trips",
+            fontSize = 18.sp,
+            color = Color.Gray,
+            modifier = Modifier
+                .padding(horizontal = 13.dp)
+        )
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(13.dp),
+            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 16.dp)
+        ) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(viagens) {
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFFFFFFFF)
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 17.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Surface(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(250.dp)
+                            ) {
+                                Image(
+                                    painter = if (it.imagem == null) painterResource(id = R.drawable.not_found) else it.imagem!!,
+                                    contentDescription = "",
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+                            Column(
+                                modifier = Modifier.padding(8.dp)
+                            ) {
+                                Text(
+                                    text = "${it.destino}, ${it.dataChegada.year}",
+                                    fontSize = 16.sp,
+                                    color = Color(0xFFCF06F0)
+                                )
+                                Text(
+                                    text = it.descricao,
+                                    fontSize = 14.sp,
+                                    color = Color.Gray,
+                                    lineHeight = 15.sp
+                                )
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp),
+                                    horizontalAlignment = Alignment.End
+                                ) {
+                                    Text(
+                                        text = "${reduzirData(it.dataChegada)} - ${reduzirData(it.dataPartida)}",
+                                        fontSize = 15.sp,
+                                        color = Color(0xD3FC06F0)
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }

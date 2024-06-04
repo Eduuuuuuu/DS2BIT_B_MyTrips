@@ -66,9 +66,10 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val controleDeNavegacao = rememberNavController()
+
                     NavHost(
                         navController = controleDeNavegacao,
-                        startDestination = "home"
+                        startDestination = "login"
                     ){
                         composable(route = "signUp"){ SingUpTela(controleDeNavegacao)}
                         composable(route = "login"){ LoginTela(controleDeNavegacao) }

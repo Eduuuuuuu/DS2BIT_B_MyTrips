@@ -1,6 +1,7 @@
 package br.senai.sp.jandira.mytrips.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,9 +22,12 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,10 +35,35 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import br.senai.sp.jandira.mytrips.R
+import br.senai.sp.jandira.mytrips.model.Usuarios
+import br.senai.sp.jandira.mytrips.repository.UsuarioRepository
 import br.senai.sp.jandira.mytrips.ui.theme.MyTripsTheme
 
 @Composable
 fun SingUpTela(controleDeNavegacao: NavHostController) {
+
+    var nomeState = remember {
+        mutableStateOf("")
+    }
+
+    var foneState = remember {
+        mutableStateOf("")
+    }
+
+    var emailState = remember {
+        mutableStateOf("")
+    }
+
+    var senhaState = remember {
+        mutableStateOf("")
+    }
+
+    var lembrarState = remember {
+        mutableStateOf(false)
+    }
+
+    var usuarioRepository = UsuarioRepository(LocalContext.current)
+
     Column (
         modifier = Modifier
             .fillMaxSize()
@@ -90,7 +119,7 @@ fun SingUpTela(controleDeNavegacao: NavHostController) {
                 .height(28.dp)
         )
         OutlinedTextField(
-            value = "Susanna Hoffs",
+            value = nomeState.value,
             leadingIcon = {
                 Image(
                     painter = painterResource(id = R.drawable.username),
@@ -101,7 +130,9 @@ fun SingUpTela(controleDeNavegacao: NavHostController) {
                 )
             },
             shape = RoundedCornerShape(16.dp),
-            onValueChange = {},
+            onValueChange = {
+                nomeState.value = it
+            },
             modifier = Modifier
                 .width(362.dp)
                 .height(60.dp)
@@ -119,7 +150,7 @@ fun SingUpTela(controleDeNavegacao: NavHostController) {
             }
         )
         OutlinedTextField(
-            value = "99999-0987",
+            value = foneState.value,
             leadingIcon = {
                 Image(
                     painter = painterResource(id = R.drawable.celular),
@@ -130,7 +161,9 @@ fun SingUpTela(controleDeNavegacao: NavHostController) {
                 )
             },
             shape = RoundedCornerShape(16.dp),
-            onValueChange = {},
+            onValueChange = {
+                foneState.value = it
+            },
             modifier = Modifier
                 .width(362.dp)
                 .height(60.dp)
@@ -148,7 +181,7 @@ fun SingUpTela(controleDeNavegacao: NavHostController) {
             }
         )
         OutlinedTextField(
-            value = "susanna@email.com",
+            value = emailState.value,
             leadingIcon = {
                 Image(
                     painter = painterResource(id = R.drawable.email),
@@ -159,7 +192,9 @@ fun SingUpTela(controleDeNavegacao: NavHostController) {
                 )
             },
             shape = RoundedCornerShape(16.dp),
-            onValueChange = {},
+            onValueChange = {
+                emailState.value = it
+            },
             modifier = Modifier
                 .width(362.dp)
                 .height(60.dp)
@@ -177,7 +212,7 @@ fun SingUpTela(controleDeNavegacao: NavHostController) {
             }
         )
         OutlinedTextField(
-            value = "************",
+            value = senhaState.value,
             leadingIcon = {
                 Image(
                     painter = painterResource(id = R.drawable.cadeado),
@@ -188,7 +223,9 @@ fun SingUpTela(controleDeNavegacao: NavHostController) {
                 )
             },
             shape = RoundedCornerShape(16.dp),
-            onValueChange = {},
+            onValueChange = {
+                senhaState.value = it
+            },
             modifier = Modifier
                 .width(362.dp)
                 .height(60.dp)
@@ -209,8 +246,10 @@ fun SingUpTela(controleDeNavegacao: NavHostController) {
             verticalAlignment = Alignment.CenterVertically
         ){
             Checkbox(
-                checked = false,
-                onCheckedChange = {},
+                checked = lembrarState.value,
+                onCheckedChange = {
+                    lembrarState.value = it
+                },
                 modifier = Modifier
                     .offset(x = 2.dp, y = 35.dp),
                 colors = CheckboxDefaults.colors(
@@ -225,7 +264,17 @@ fun SingUpTela(controleDeNavegacao: NavHostController) {
             )
         }
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+                val novoUsuario = Usuarios(
+                    nome = nomeState.value,
+                    telefone = foneState.value,
+                    email = emailState.value,
+                    senha = senhaState.value
+                )
+                usuarioRepository.salvar(novoUsuario)
+
+                controleDeNavegacao.navigate("login")
+            },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFCF06F0)),
             modifier = Modifier
                 .offset(x = 20.dp, y = 50.dp)
@@ -259,6 +308,7 @@ fun SingUpTela(controleDeNavegacao: NavHostController) {
                 color = Color(0xFFCf06F0),
                 modifier = Modifier
                     .offset(x = -30.dp, y = 60.dp)
+                    .clickable { controleDeNavegacao.navigate("login") }
             )
         }
         Row (
@@ -270,7 +320,7 @@ fun SingUpTela(controleDeNavegacao: NavHostController) {
                 modifier = Modifier
                     .width(135.dp)
                     .height(40.dp)
-                    .offset(x = 0.dp, y = 117.dp),
+                    .offset(x = 0.dp, y = 100.dp),
                 shape = RoundedCornerShape(topEnd = 16.dp)
             ){
             }
