@@ -1,6 +1,7 @@
 package br.senai.sp.jandira.mytrips.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,8 +19,11 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,10 +31,32 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import br.senai.sp.jandira.mytrips.R
+import br.senai.sp.jandira.mytrips.repository.UsuarioRepository
 import br.senai.sp.jandira.mytrips.ui.theme.MyTripsTheme
 
 @Composable
 fun LoginTela(controleDeNavegacao: NavHostController) {
+
+    var emailState = remember {
+        mutableStateOf("")
+    }
+
+    var senhaState = remember {
+        mutableStateOf("")
+    }
+
+    var errorState = remember {
+        mutableStateOf(false)
+    }
+
+    var mensagemErrorState = remember {
+        mutableStateOf("")
+    }
+
+    var usuarioRepository = UsuarioRepository(LocalContext.current)
+
+    var listaUsuarios = usuarioRepository.listarTodosUsuarios()
+
     Column (
         modifier = Modifier
             .fillMaxSize()
@@ -62,7 +88,7 @@ fun LoginTela(controleDeNavegacao: NavHostController) {
                 .offset(x = 15.dp, y = 158.dp),
         )
         OutlinedTextField(
-            value = "teste@email.com",
+            value = emailState.value,
             leadingIcon = {
                 Image(
                     painter = painterResource(id = R.drawable.email),
@@ -72,7 +98,9 @@ fun LoginTela(controleDeNavegacao: NavHostController) {
                         .height(26.dp)
                 )
             },
-            onValueChange = {},
+            onValueChange = {
+                emailState.value = it
+            },
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier
                 .width(362.dp)
@@ -92,7 +120,7 @@ fun LoginTela(controleDeNavegacao: NavHostController) {
             }
         )
         OutlinedTextField(
-            value = "************",
+            value = senhaState.value,
             leadingIcon = {
                 Image(
                     painter = painterResource(id = R.drawable.cadeado),
@@ -102,7 +130,9 @@ fun LoginTela(controleDeNavegacao: NavHostController) {
                         .height(26.dp)
                 )
             },
-            onValueChange = {},
+            onValueChange = {
+                senhaState.value = it
+            },
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier
                 .width(362.dp)
@@ -122,7 +152,21 @@ fun LoginTela(controleDeNavegacao: NavHostController) {
             }
         )
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+                if (emailState.value != "" && senhaState.value != "") {
+                    listaUsuarios.forEach{
+                        if (it.email == emailState.value && it.senha == senhaState.value) {
+                            controleDeNavegacao.navigate("home")
+                        } else {
+                            errorState.value = true
+                            mensagemErrorState.value = "E-mail ou senha incorreto"
+                        }
+                    }
+                } else {
+                    errorState.value = true
+                    mensagemErrorState.value = "Todos os campos são obrigatórios"
+                }
+            },
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier
                 .width(135.dp)
@@ -161,6 +205,7 @@ fun LoginTela(controleDeNavegacao: NavHostController) {
             color = Color(0xFFCF06F0),
             modifier = Modifier
                 .offset(x = 335.dp, y = 313.dp)
+                .clickable { controleDeNavegacao.navigate("signUp") }
         )
         Row (
             modifier = Modifier
